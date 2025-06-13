@@ -16,6 +16,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 	public ErrorResponseDto TodoException(Exception ex, WebRequest request) {
+		log.error("[ERROR]" + "[" + request.getClass().getName() + "]:" + ex.getMessage());
 		return new ErrorResponseDto("COM00001", "Something went wrong.", ex.getMessage());
 	}
 }

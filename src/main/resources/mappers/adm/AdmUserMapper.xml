@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.adm.mappers.AdmUserMapper">
 	<insert id="createNewUser" parameterType="com.example.demo.adm.dtos.CreateUserDto">
-		INSERT INTO adm_user (username, password)
+		INSERT INTO adm_usr (username, password)
 		VALUES (
 			#{username}, 
 			#{password}

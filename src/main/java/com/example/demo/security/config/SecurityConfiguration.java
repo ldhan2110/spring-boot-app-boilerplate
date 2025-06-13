@@ -1,6 +1,7 @@
 package com.example.demo.security.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,16 +14,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import com.example.demo.auth.services.AuthService;
-import com.example.demo.security.filters.JwtAuthenticationFilter;
+import com.example.demo.security.utils.JwtAuthConverter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
 	@Autowired
-	JwtAuthenticationFilter jwtFilter;
+	JwtAuthConverter jwtAuthConverter;
 
 	@Autowired
 	AuthService authService;
@@ -46,13 +45,28 @@ public class SecurityConfiguration {
 	}
 
 	@Bean
+	@ConditionalOnProperty(value = "keycloak.enabled", havingValue = "false", matchIfMissing = true)
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-						.requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll().requestMatchers("/public/**")
-						.permitAll().anyRequest().authenticated())
+						.requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
+						.requestMatchers("/public/**", "/swagger-ui/**", "/api-docs/**").permitAll().anyRequest()
+						.authenticated())
 				.authenticationProvider(authenticationProvider())
-				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+		return http.build();
+	}
+
+	@Bean
+	@ConditionalOnProperty(value = "keycloak.enabled", havingValue = "true")
+	SecurityFilterChain keycloakFilterChain(HttpSecurity http) throws Exception {
+		http.csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
+						.requestMatchers("/public/**", "/swagger-ui/**", "/api-docs/**").permitAll().anyRequest()
+						.authenticated())
+				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)))
+//				.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		return http.build();
 	}

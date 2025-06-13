@@ -19,13 +19,17 @@
         </RollingFile>
     </Appenders>
     <Loggers>
+      	<Logger name="org.springframework.boot" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
         <Logger name="com.example" level="DEBUG" additivity="false">
             <AppenderRef ref="LogToConsole"/>
             <AppenderRef ref="LogToRollingFile"/>
         </Logger>
         <Root level="debug">
-            <AppenderRef ref="Console" />
-            <AppenderRef ref="fileLogs" />
+            <AppenderRef ref="LogToConsole" />
+            <AppenderRef ref="LogToRollingFile" />
         </Root>
     </Loggers>
 </Configuration>

@@ -11,7 +11,7 @@ public class QuartzUtils {
 	public static JobDetail builJobDetail(final Class jobclass, String jobName) {
 		final JobDataMap jobDataMap = new JobDataMap();
 		jobDataMap.put(jobName, "Hello World, I am Quartz");
-		return JobBuilder.newJob(jobclass).withIdentity(jobName).setJobData(jobDataMap).build();
+		return JobBuilder.newJob(jobclass).withIdentity(jobName).usingJobData(jobDataMap).build();
 	}
 
 	public static Trigger buildTriggerCron(JobDetail job, String jobName, String cronExpression) {

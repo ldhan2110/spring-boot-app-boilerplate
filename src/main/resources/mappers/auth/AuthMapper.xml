@@ -3,9 +3,9 @@
 <mapper namespace="com.example.demo.auth.mappers.AuthMapper">
 	<select id="loadUserByUsername" parameterType="java.lang.String" resultType="com.example.demo.auth.entities.UserInfo">
 		SELECT
-			USERNAME,
-			PASSWORD
-			FROM ADM_USER
-			WHERE USERNAME = #{username}
+			USR_ID AS USERNAME,
+			USR_PWD AS PASSWORD
+			FROM ADM_USR
+			WHERE USR_ID = #{username}
 	</select>
 </mapper>

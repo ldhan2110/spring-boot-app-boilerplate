@@ -3,6 +3,7 @@ package com.example.demo.security.filters;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -18,8 +19,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
-@Component
 @Slf4j
+@Component
+@ConditionalOnProperty(value = "keycloak.enabled", havingValue = "false", matchIfMissing = true)
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Autowired
 	private JwtUtils jwtUtil;
